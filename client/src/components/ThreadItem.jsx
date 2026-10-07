@@ -5,6 +5,7 @@ function ThreadItem({ thread }) {
   const avatarUrl =
     thread.author?.avatarUrl ?? "/placeholder-avatar.png";
   const replyCount = thread._count?.comments ?? 0;
+  const replyLabel = replyCount === 1 ? "reply" : "replies";
 
   return (
     <article className="thread-card">
@@ -24,7 +25,7 @@ function ThreadItem({ thread }) {
       <p>{thread.body}</p>
 
       <span className="reply-badge">
-        {replyCount} replies
+        {replyCount} {replyLabel}
       </span>
     </article>
   );
