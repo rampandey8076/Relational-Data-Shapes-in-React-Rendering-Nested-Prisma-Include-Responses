@@ -1,28 +1,32 @@
 import PropTypes from "prop-types";
 
-// TODO: This component still assumes the OLD flat response shape.
-// Fix it to read the nested Prisma include response from the API:
-//   thread.author?.name
-//   thread.author?.avatarUrl
-//   thread._count?.comments
-// Also add fallback UI so author-less seeded rows do not crash.
-export default function ThreadItem({ thread }) {
+function ThreadItem({ thread }) {
+  const authorName = thread.author?.name ?? "Unknown";
+  const avatarUrl =
+    thread.author?.avatarUrl ?? "/placeholder-avatar.png";
+  const replyCount = thread._count?.comments ?? 0;
+
   return (
-    <li className="thread">
-      <div className="thread-top">
-        <img className="avatar" src="/placeholder-avatar.svg" alt="placeholder" />
+    <article className="thread-card">
+      <div className="thread-header">
+        <img
+          src={avatarUrl}
+          alt={authorName}
+          className="avatar"
+        />
 
-        <div className="thread-main">
+        <div>
           <h3>{thread.title}</h3>
-          <p className="meta">by {thread.authorName}</p>
+          <p className="meta">by {authorName}</p>
         </div>
-
-        <span className="badge">{thread.commentCount} replies</span>
       </div>
 
       <p>{thread.body}</p>
-      <p className="todo">TODO: Replace flat author fields with nested relation paths.</p>
-    </li>
+
+      <span className="reply-badge">
+        {replyCount} replies
+      </span>
+    </article>
   );
 }
 
@@ -31,7 +35,15 @@ ThreadItem.propTypes = {
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     body: PropTypes.string.isRequired,
-    authorName: PropTypes.string,
-    commentCount: PropTypes.number,
+    authorId: PropTypes.number,
+    author: PropTypes.shape({
+      name: PropTypes.string,
+      avatarUrl: PropTypes.string,
+    }),
+    _count: PropTypes.shape({
+      comments: PropTypes.number,
+    }),
   }).isRequired,
 };
+
+export default ThreadItem;
